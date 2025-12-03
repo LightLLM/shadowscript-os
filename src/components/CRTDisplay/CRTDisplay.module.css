@@ -1,0 +1,169 @@
+.crtDisplay {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--color-background);
+  overflow: hidden;
+  
+  /* Subtle screen curvature for authenticity */
+  transform: perspective(1200px) rotateX(0.3deg);
+}
+
+/* Phosphor glow based on color - tuned for optimal visibility */
+.crtDisplay[data-phosphor="green"] {
+  color: var(--color-bright-green);
+  text-shadow: 
+    0 0 3px var(--color-bright-green),
+    0 0 6px rgba(85, 255, 85, 0.5),
+    0 0 12px rgba(85, 255, 85, 0.2);
+}
+
+.crtDisplay[data-phosphor="amber"] {
+  color: var(--color-yellow);
+  text-shadow: 
+    0 0 3px var(--color-yellow),
+    0 0 6px rgba(255, 255, 85, 0.5),
+    0 0 12px rgba(255, 255, 85, 0.2);
+}
+
+.crtDisplay[data-phosphor="white"] {
+  color: var(--color-white);
+  text-shadow: 
+    0 0 3px var(--color-white),
+    0 0 6px rgba(255, 255, 255, 0.5),
+    0 0 12px rgba(255, 255, 255, 0.2);
+}
+
+/* Scanlines overlay - optimized for visibility */
+.crtDisplay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, var(--scanline-opacity, 0.12)),
+    rgba(0, 0, 0, var(--scanline-opacity, 0.12)) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Subtle flicker effect - balanced for immersion without distraction */
+.crtDisplay::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.015);
+  animation: flicker 0.18s infinite;
+  pointer-events: none;
+  z-index: 999;
+}
+
+@keyframes flicker {
+  0%, 100% { 
+    opacity: 1; 
+  }
+  50% { 
+    opacity: 0.97; 
+  }
+}
+
+/* Glitch animation - balanced intensity */
+.crtDisplay.glitching {
+  animation: glitch 0.25s ease-in-out;
+}
+
+@keyframes glitch {
+  0%, 100% {
+    transform: perspective(1200px) rotateX(0.3deg) translateX(0);
+    filter: brightness(1);
+  }
+  15% {
+    transform: perspective(1200px) rotateX(0.3deg) translateX(-3px);
+    filter: brightness(1.1);
+  }
+  30% {
+    transform: perspective(1200px) rotateX(0.3deg) translateX(3px);
+    filter: brightness(0.9);
+  }
+  45% {
+    transform: perspective(1200px) rotateX(0.3deg) translateX(-2px);
+    filter: brightness(1.05);
+  }
+  60% {
+    transform: perspective(1200px) rotateX(0.3deg) translateX(2px);
+    filter: brightness(0.95);
+  }
+  75% {
+    transform: perspective(1200px) rotateX(0.3deg) translateX(-1px);
+    filter: brightness(1.02);
+  }
+  90% {
+    transform: perspective(1200px) rotateX(0.3deg) translateX(1px);
+    filter: brightness(0.98);
+  }
+}
+
+/* Responsive adjustments for different screen sizes */
+@media (max-width: 768px) {
+  .crtDisplay {
+    /* Reduce curvature on smaller screens */
+    transform: perspective(1500px) rotateX(0.2deg);
+  }
+  
+  .crtDisplay::before {
+    /* Lighter scanlines on mobile for better readability */
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, calc(var(--scanline-opacity, 0.12) * 0.7)),
+      rgba(0, 0, 0, calc(var(--scanline-opacity, 0.12) * 0.7)) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+  }
+  
+  .crtDisplay[data-phosphor="green"],
+  .crtDisplay[data-phosphor="amber"],
+  .crtDisplay[data-phosphor="white"] {
+    /* Reduce glow on smaller screens */
+    text-shadow: 
+      0 0 2px currentColor,
+      0 0 4px currentColor;
+  }
+}
+
+@media (min-width: 1920px) {
+  .crtDisplay {
+    /* Slightly more pronounced effects on larger screens */
+    transform: perspective(1000px) rotateX(0.4deg);
+  }
+  
+  .crtDisplay[data-phosphor="green"] {
+    text-shadow: 
+      0 0 4px var(--color-bright-green),
+      0 0 8px rgba(85, 255, 85, 0.6),
+      0 0 16px rgba(85, 255, 85, 0.3);
+  }
+  
+  .crtDisplay[data-phosphor="amber"] {
+    text-shadow: 
+      0 0 4px var(--color-yellow),
+      0 0 8px rgba(255, 255, 85, 0.6),
+      0 0 16px rgba(255, 255, 85, 0.3);
+  }
+  
+  .crtDisplay[data-phosphor="white"] {
+    text-shadow: 
+      0 0 4px var(--color-white),
+      0 0 8px rgba(255, 255, 255, 0.6),
+      0 0 16px rgba(255, 255, 255, 0.3);
+  }
+}

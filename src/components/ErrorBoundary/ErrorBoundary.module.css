@@ -1,0 +1,110 @@
+.errorContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-black);
+  z-index: 9999;
+  animation: flicker 0.3s infinite;
+}
+
+.errorBox {
+  max-width: 600px;
+  padding: 2rem;
+  text-align: left;
+  font-family: 'Courier New', monospace;
+  color: var(--color-bright-red);
+  text-shadow: 0 0 5px var(--color-bright-red), 0 0 10px var(--color-bright-red);
+}
+
+.errorHeader,
+.errorFooter {
+  color: var(--color-bright-red);
+  font-size: 1rem;
+  line-height: 1.2;
+  white-space: pre;
+}
+
+.errorContent {
+  margin: 0;
+  padding: 0;
+}
+
+.errorTitle {
+  color: var(--color-bright-red);
+  font-size: 1rem;
+  line-height: 1.2;
+  margin: 0.5rem 0;
+  animation: glitch 0.5s infinite;
+}
+
+.errorMessage {
+  color: var(--color-bright-red);
+  font-size: 1rem;
+  line-height: 1.2;
+  margin: 0.25rem 0;
+}
+
+.errorDetails {
+  color: var(--color-yellow);
+  font-size: 0.9rem;
+  line-height: 1.2;
+  margin: 0.5rem 0;
+  word-wrap: break-word;
+}
+
+.resetButton {
+  margin-top: 2rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 2px solid var(--color-bright-red);
+  color: var(--color-bright-red);
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  cursor: pointer;
+  text-shadow: 0 0 5px var(--color-bright-red);
+  transition: all 0.2s;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.resetButton:hover {
+  background: var(--color-bright-red);
+  color: var(--color-black);
+  text-shadow: none;
+  box-shadow: 0 0 10px var(--color-bright-red);
+}
+
+.resetButton:focus {
+  outline: 2px solid var(--color-bright-red);
+  outline-offset: 4px;
+}
+
+@keyframes flicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes glitch {
+  0%, 100% {
+    transform: translate(0);
+  }
+  25% {
+    transform: translate(-2px, 2px);
+  }
+  50% {
+    transform: translate(2px, -2px);
+  }
+  75% {
+    transform: translate(-2px, -2px);
+  }
+}

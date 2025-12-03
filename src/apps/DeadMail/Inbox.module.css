@@ -1,0 +1,130 @@
+.inbox {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--color-text);
+}
+
+.title {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+
+.composeButton {
+  background: transparent;
+  border: 2px solid var(--color-text);
+  color: var(--color-text);
+  padding: 8px 16px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.composeButton:hover {
+  background: var(--color-text);
+  color: var(--color-black);
+  box-shadow: 0 0 15px var(--color-text);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--color-text);
+  opacity: 0.7;
+}
+
+.emptyState p {
+  margin: 10px 0;
+}
+
+.ghostText {
+  font-style: italic;
+  opacity: 0.5;
+  animation: ghostFade 3s ease-in-out infinite;
+}
+
+@keyframes ghostFade {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.messageList {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.listHeader {
+  display: grid;
+  grid-template-columns: 200px 1fr 150px;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 2px solid var(--color-text);
+  font-weight: bold;
+  color: var(--color-text);
+  background: rgba(0, 170, 0, 0.1);
+}
+
+.messageItem {
+  display: grid;
+  grid-template-columns: 200px 1fr 150px;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid var(--color-dark-gray);
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--color-text);
+}
+
+.messageItem:hover {
+  background: rgba(0, 170, 0, 0.2);
+  box-shadow: 0 0 10px rgba(0, 170, 0, 0.3);
+}
+
+.unread {
+  font-weight: bold;
+  background: rgba(0, 170, 0, 0.05);
+}
+
+.unreadIndicator {
+  color: var(--color-bright-green);
+  margin-right: 5px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.columnFrom,
+.columnSubject,
+.columnDate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.columnDate {
+  text-align: right;
+  font-size: 12px;
+  opacity: 0.8;
+}

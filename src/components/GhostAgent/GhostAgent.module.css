@@ -1,0 +1,31 @@
+.ghostAgent {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.ghostIcon {
+  font-size: 32px;
+  animation: float 3s ease-in-out infinite, fade 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(85, 255, 255, 0.5));
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fade {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}

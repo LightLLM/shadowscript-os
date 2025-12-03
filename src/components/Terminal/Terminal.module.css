@@ -1,0 +1,75 @@
+.terminal {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  font-family: var(--font-mono);
+}
+
+.output {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.output > div {
+  margin-bottom: 4px;
+}
+
+.input {
+  color: var(--color-text);
+}
+
+.output {
+  color: var(--color-text);
+}
+
+.error {
+  color: var(--color-bright-red);
+}
+
+.ghost {
+  color: var(--color-bright-cyan);
+  font-style: italic;
+}
+
+.prompt {
+  color: var(--color-text);
+  margin-right: 4px;
+}
+
+.inputLine {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.inputField {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  caret-color: transparent;
+}
+
+.cursor {
+  position: absolute;
+  left: calc(1ch + 8px);
+  animation: cursorBlink 1s step-end infinite;
+  color: var(--color-text);
+}
+
+@keyframes cursorBlink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}

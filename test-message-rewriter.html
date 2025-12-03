@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MessageRewriter Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0f0;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #0f0;
+            text-shadow: 0 0 10px #0f0;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #0f0;
+            background: rgba(0, 255, 0, 0.05);
+        }
+        .test-title {
+            font-weight: bold;
+            color: #0ff;
+            margin-bottom: 10px;
+        }
+        .original {
+            color: #888;
+        }
+        .rewritten {
+            color: #0f0;
+            text-shadow: 0 0 5px #0f0;
+        }
+        .result {
+            margin: 5px 0;
+        }
+        button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0ff;
+        }
+        input {
+            background: #000;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 5px;
+            font-family: 'Courier New', monospace;
+            width: 100%;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>MessageRewriter Test Suite</h1>
+    
+    <div class="test-section">
+        <div class="test-title">Interactive Test</div>
+        <input type="text" id="customMessage" placeholder="Enter a message to transform..." value="Hello, this is a haunted message">
+        <div>
+            <label>Intensity: <input type="range" id="intensity" min="0" max="100" value="50"> <span id="intensityValue">0.5</span></label>
+        </div>
+        <button onclick="testCustomMessage()">Transform Message</button>
+        <div id="customResult"></div>
+    </div>
+
+    <div id="testResults"></div>
+
+    <script type="module">
+        // Import the MessageRewriter class
+        import { MessageRewriter } from './src/services/mcp/MessageRewriter.ts';
+
+        window.rewriter = new MessageRewriter();
+        window.testResults = [];
+
+        // Update intensity display
+        document.getElementById('intensity').addEventListener('input', (e) => {
+            const value = (e.target.value / 100).toFixed(2);
+            document.getElementById('intensityValue').textContent = value;
+        });
+
+        window.testCustomMessage = function() {
+            const message = document.getElementById('customMessage').value;
+            const intensity = parseFloat(document.getElementById('intensity').value) / 100;
+            const result = window.rewriter.rewrite(message, intensity);
+            
+            document.getElementById('customResult').innerHTML = `
+                <div class="result">
+                    <div class="original">Original: ${message}</div>
+                    <div class="rewritten">Rewritten: ${result}</div>
+                </div>
+            `;
+        };
+
+        function runTests() {
+            const resultsDiv = document.getElementById('testResults');
+            let html = '';
+
+            // Test 1: Low intensity
+            html += '<div class="test-section">';
+            html += '<div class="test-title">Test 1: Low Intensity (0.2)</div>';
+            const msg1 = 'The ghost is watching you';
+            const res1 = window.rewriter.rewrite(msg1, 0.2);
+            html += `<div class="original">Original: ${msg1}</div>`;
+            html += `<div class="rewritten">Rewritten: ${res1}</div>`;
+            html += '</div>';
+
+            // Test 2: Medium intensity
+            html += '<div class="test-section">';
+            html += '<div class="test-title">Test 2: Medium Intensity (0.5)</div>';
+            const msg2 = 'Welcome to ShadowScript OS';
+            const res2 = window.rewriter.rewrite(msg2, 0.5);
+            html += `<div class="original">Original: ${msg2}</div>`;
+            html += `<div class="rewritten">Rewritten: ${res2}</div>`;
+            html += '</div>';
+
+            // Test 3: High intensity
+            html += '<div class="test-section">';
+            html += '<div class="test-title">Test 3: High Intensity (0.9)</div>';
+            const msg3 = 'Your files are being corrupted';
+            const res3 = window.rewriter.rewrite(msg3, 0.9);
+            html += `<div class="original">Original: ${msg3}</div>`;
+            html += `<div class="rewritten">Rewritten: ${res3}</div>`;
+            html += '</div>';
+
+            // Test 4: Performance
+            html += '<div class="test-section">';
+            html += '<div class="test-title">Test 4: Performance Test</div>';
+            const longMsg = 'This is a longer message that will be used to test the performance of the MessageRewriter service. It should complete within 100ms according to the requirements.';
+            const start = performance.now();
+            const res4 = window.rewriter.rewrite(longMsg, 0.5);
+            const duration = performance.now() - start;
+            html += `<div class="original">Original: ${longMsg}</div>`;
+            html += `<div class="rewritten">Rewritten: ${res4}</div>`;
+            html += `<div class="result">Duration: ${duration.toFixed(2)}ms ${duration < 100 ? '✓ PASS' : '✗ FAIL'}</div>`;
+            html += '</div>';
+
+            // Test 5: Caching
+            html += '<div class="test-section">';
+            html += '<div class="test-title">Test 5: Caching Test</div>';
+            const cacheMsg = 'Cached message test';
+            const start1 = performance.now();
+            const res5a = window.rewriter.rewrite(cacheMsg, 0.5);
+            const dur1 = performance.now() - start1;
+            
+            const start2 = performance.now();
+            const res5b = window.rewriter.rewrite(cacheMsg, 0.5);
+            const dur2 = performance.now() - start2;
+            
+            html += `<div class="result">First call: ${dur1.toFixed(2)}ms</div>`;
+            html += `<div class="result">Second call (cached): ${dur2.toFixed(2)}ms</div>`;
+            html += `<div class="result">Results match: ${res5a === res5b ? '✓ YES' : '✗ NO'}</div>`;
+            html += `<div class="result">Caching works: ${dur2 < dur1 ? '✓ PASS' : '✗ FAIL'}</div>`;
+            html += '</div>';
+
+            resultsDiv.innerHTML = html;
+        }
+
+        // Run tests on load
+        runTests();
+    </script>
+</body>
+</html>

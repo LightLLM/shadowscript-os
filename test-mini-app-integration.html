@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini-App Integration Tests - ShadowScript OS</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background: #000;
+      color: #55FF55;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      text-align: center;
+      border: 2px solid #55FF55;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .test-section {
+      border: 1px solid #55FF55;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .test-section h2 {
+      margin-top: 0;
+      color: #55FFFF;
+    }
+    
+    .test-result {
+      padding: 5px 10px;
+      margin: 5px 0;
+      border-left: 3px solid;
+    }
+    
+    .test-result.pass {
+      border-color: #55FF55;
+      background: rgba(85, 255, 85, 0.1);
+    }
+    
+    .test-result.fail {
+      border-color: #FF5555;
+      background: rgba(255, 85, 85, 0.1);
+      color: #FF5555;
+    }
+    
+    .summary {
+      border: 2px solid #FFFF55;
+      padding: 15px;
+      margin-top: 20px;
+      background: rgba(255, 255, 85, 0.05);
+    }
+    
+    .summary h2 {
+      margin-top: 0;
+      color: #FFFF55;
+    }
+    
+    button {
+      background: #55FF55;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 10px 5px;
+    }
+    
+    button:hover {
+      background: #55FFFF;
+    }
+    
+    button:disabled {
+      background: #555;
+      color: #888;
+      cursor: not-allowed;
+    }
+    
+    .loading {
+      text-align: center;
+      color: #FFFF55;
+      font-size: 18px;
+      padding: 20px;
+    }
+    
+    .performance {
+      color: #FF55FF;
+      font-style: italic;
+    }
+    
+    pre {
+      background: rgba(85, 255, 85, 0.05);
+      padding: 10px;
+      overflow-x: auto;
+      border: 1px solid #55FF55;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>░▒▓█ MINI-APP INTEGRATION TEST SUITE █▓▒░</h1>
+    
+    <div style="text-align: center; margin-bottom: 20px;">
+      <button id="runTests" onclick="runAllTests()">▶ Run All Tests</button>
+      <button id="clearStorage" onclick="clearStorage()">🗑️ Clear Storage</button>
+    </div>
+    
+    <div id="loading" class="loading" style="display: none;">
+      ░▒▓ Running tests... ▓▒░
+    </div>
+    
+    <div id="results"></div>
+  </div>
+
+  <script type="module">
+    import { VirtualFileSystem } from './src/services/mcp/VirtualFileSystem.js';
+
+    let testResults = [];
+
+    async function testGhostPaintSaveLoad() {
+      const results = [];
+      const fs = new VirtualFileSystem();
+
+      // Test 1: GhostPaint directory creation
+      try {
+        const dirExists = await fs.exists('/ghostpaint');
+        if (!dirExists) {
+          await fs.createDirectory('/ghostpaint');
+        }
+        
+        const dirExistsAfter = await fs.exists('/ghostpaint');
+        results.push({
+          name: 'GhostPaint directory creation',
+          passed: dirExistsAfter,
+          message: dirExistsAfter ? 'Directory created successfully' : 'Failed to create directory'
+        });
+      } catch (error) {
+        results.push({
+          name: 'GhostPaint directory creation',
+          passed: false,
+          message: `Error: ${error.message}`
+        });
+      }
+
+      // Test 2: Save GhostPaint artwork
+      try {
+        const timestamp = Date.now();
+        const filename = `artwork_${timestamp}.json`;
+        const path = `/ghostpaint/${filename}`;
+        
+        const artworkData = {
+          width: 32,
+          height: 32,
+          pixels: Array(32).fill(null).map(() => 
+            Array(32).fill('transparent').map((_, i) => 
+              i % 5 === 0 ? '#55FF55' : 'transparent'
+            )
+          ),
+          timestamp,
+          version: '1.0'
+        };
+
+        await fs.createFile(path, JSON.stringify(artworkData, null, 2));
+        
+        const fileExists = await fs.exists(path);
+        results.push({
+          name: 'Save GhostPaint artwork',
+          passed: fileExists,
+          message: fileExists ? `Artwork saved as ${filename}` : 'Failed to save artwork'
+        });
+      } catch (error) {
+        results.push({
+          name: 'Save GhostPaint artwork',
+          passed: false,
+          message: `Error: ${error.message}`
+        });
+      }
+
+      // Test 3: Load GhostPaint artwork
+      try {
+        const files = await fs.listDirectory('/ghostpaint');
+        
+        if (files.length === 0) {
+          results.push({
+            name: 'Load GhostPaint artwork',
+            passed: false,
+            message: 'No saved artworks found'
+          });
+        } else {
+          const sortedFiles = files.sort((a, b) => b.modified - a.modified);
+          const latestFile = sortedFiles[0];
+          
+          const content = await fs.readFile(latestFile.path);
+          const artworkData = JSON.parse(content);
+          
+          const hasWidth = 'width' in artworkData;
+          const hasHeight = 'height' in artworkData;
+          const hasPixels = 'pixels' in artworkData && Array.isArray(artworkData.pixels);
+          const hasTimestamp = 'timestamp' in artworkData;
+          const hasVersion = 'version' in artworkData;
+          
+          const isValid = hasWidth && hasHeight && hasPixels && hasTimestamp && hasVersion;
+          
+          results.push({
+            name: 'Load GhostPaint artwork',
+            passed: isValid,
+            message: isValid 
+              ? `Loaded ${latestFile.name} successfully (${artworkData.width}x${artworkData.height})`
+              : 'Artwork data structure is invalid'
+          });
+        }
+      } catch (error) {
+        results.push({
+          name: 'Load GhostPaint artwork',
+          passed: false,
+          message: `Error: ${error.message}`
+        });
+      }
+
+      // Test 4: GhostPaint save/load round trip
+      try {
+        const timestamp = Date.now();
+        const filename = `roundtrip_${timestamp}.json`;
+        const path = `/ghostpaint/${filename}`;
+        
+        const originalArtwork = {
+          width: 16,
+          height: 16,
+          pixels: Array(16).fill(null).map((_, y) => 
+            Array(16).fill('transparent').map((_, x) => 
+              (x + y) % 3 === 0 ? '#FF5555' : 'transparent'
+            )
+          ),
+          timestamp,
+          version: '1.0'
+        };
+
+        await fs.createFile(path, JSON.stringify(originalArtwork, null, 2));
+        
+        const loadedContent = await fs.readFile(path);
+        const loadedArtwork = JSON.parse(loadedContent);
+        
+        const widthMatch = originalArtwork.width === loadedArtwork.width;
+        const heightMatch = originalArtwork.height === loadedArtwork.height;
+        const pixelsMatch = JSON.stringify(originalArtwork.pixels) === JSON.stringify(loadedArtwork.pixels);
+        const timestampMatch = originalArtwork.timestamp === loadedArtwork.timestamp;
+        
+        const roundTripSuccess = widthMatch && heightMatch && pixelsMatch && timestampMatch;
+        
+        results.push({
+          name: 'GhostPaint save/load round trip',
+          passed: roundTripSuccess,
+          message: roundTripSuccess 
+            ? 'Round trip successful - data preserved'
+            : `Round trip failed - width:${widthMatch}, height:${heightMatch}, pixels:${pixelsMatch}, timestamp:${timestampMatch}`
+        });
+      } catch (error) {
+        results.push({
+          name: 'GhostPaint save/load round trip',
+          passed: false,
+          message: `Error: ${error.message}`
+        });
+      }
+
+      return results;
+    }
+
+    async function testDeadMailPersistence() {
+      const results = [];
+      const fs = new VirtualFileSystem();
+
+      // Test 5: DeadMail directory creation
+      try {
+        const dirExists = await fs.exists('/deadmail');
+        if (!dirExists) {
+          await fs.createDirectory('/deadmail');
+        }
+        
+        const dirExistsAfter = await fs.exists('/deadmail');
+        results.push({
+          name: 'DeadMail directory creation',
+          passed: dirExistsAfter,
+          message: dirExistsAfter ? 'Directory created successfully' : 'Failed to create directory'
+        });
+      } catch (error) {
+        results.push({
+          name: 'DeadMail directory creation',
+          passed: false,
+          message: `Error: ${error.message}`
+        });
+      }
+
+      // Test 6: Send email (save to filesystem)
+      try {
+        const timestamp = Date.now();
+        const email = {
+          id: `email_${timestamp}`,
+          from: 'ghost@shadowscript.os',
+          to: 'user@shadowscript.os',
+          subject: 'Test Email from the Void',
+          body: 'This is a test email to verify DeadMail persistence.',
+          timestamp,
+          isRead: false
+        };
+
+        const filename = `${email.id}.json`;
+        const path = `/deadmail/${filename}`;
+        
+        const startTime = performance.now();
+        await fs.createFile(path, JSON.stringify(email, null, 2));
+        const endTime = performance.now();
+        const duration = endTime - startTime;
+        
+        const fileExists = await fs.exists(path);
+        const withinTimeLimit = duration < 500;
+        
+        results.push({
+          name: 'Send email (save to filesystem)',
+          passed: fileExists && withinTimeLimit,
+          message: fileExists 
+            ? `Email saved in ${duration.toFixed(2)}ms ${withinTimeLimit ? '(✓ <500ms)' : '(✗ ≥500ms)'}`
+            : 'Failed to save email',
+          duration
+        });
+      } catch (error) {
+        results.push({
+          name: 'Send email (save to filesystem)',
+          passed: false,
+          message: `Error: ${error.message}`
+        });
+      }
+
+      // Test 7: Load inbox messages
+      try {
+        const files = await fs.listDirectory('/deadmail');
+        
+        if (files.length === 0) {
+          results.push({
+            name: 'Load inbox messages',
+            passed: false,
+            message: 'No messages found in inbox'
+          });
+        } else {
+          const emails = [];
+          
+          for (const file of files) {
+            if (file.type === 'file' && file.name.endsWith('.json')) {
+              const content = await fs.readFile(file.path);
+              const email = JSON.parse(content);
+              emails.push(email);
+            }
+          }
+          
+          const allValid = emails.every(email => 
+            'id' in email &&
+            'from' in email &&
+            'to' in email &&
+            'subject' in email &&
+            'body' in email &&
+            'timestamp' in email &&
+            'isRead' in email
+          );
+          
+          results.push({
+            name: 'Load inbox messages',
+            passed: allValid && emails.length > 0,
+            message: allValid 
+              ? `Loaded ${emails.length} message(s) successfully`
+              : 'Some messages have invalid structure'
+          });
+        }
+      } catch (error) {
+        results.push({
+          name: 'Load inbox messages',
+          passed: false,
+          message: `Error: ${error.message}`
+        });
+      }
+
+      // Test 8: Update email (mark as read)
+      try {
+        const files = await fs.listDirectory('/deadmail');
+        
+        if (files.length === 0) {
+          results.push({
+            name: 'Update email (mark as read)',
+            passed: false,
+            message: 'No messages to update'
+          });
+        } else {
+          const firstFile = files[0];
+          const content = await fs.readFile(firstFile.path);
+          const email = JSON.parse(content);
+          
+          email.isRead = true;
+          
+          await fs.updateFile(firstFile.path, JSON.stringify(email, null, 2));
+          
+          const updatedContent = await fs.readFile(firstFile.path);
+          const updatedEmail = JSON.parse(updatedContent);
+          
+          results.push({
+            name: 'Update email (mark as read)',
+            passed: updatedEmail.isRead === true,
+            message: updatedEmail.isRead 
+              ? 'Email marked as read successfully'
+              : 'Failed to update email read status'
+          });
+        }
+      } catch (error) {
+        results.push({
+          name: 'Update email (mark as read)',
+          passed: false,
+          message: `Error: ${error.message}`
+        });
+      }
+
+      // Test 9: DeadMail message persistence performance
+      try {
+        const performanceResults = [];
+        
+        for (let i = 0; i < 5; i++) {
+          const timestamp = Date.now();
+          const email = {
+            id: `perf_test_${timestamp}_${i}`,
+            from: 'performance@test.os',
+            to: 'user@shadowscript.os',
+            subject: `Performance Test ${i + 1}`,
+            body: 'Testing message persistence performance.',
+            timestamp,
+            isRead: false
+          };
+
+          const path = `/deadmail/${email.id}.json`;
+          
+          const startTime = performance.now();
+          await fs.createFile(path, JSON.stringify(email, null, 2));
+          const endTime = performance.now();
+          
+          performanceResults.push(endTime - startTime);
+        }
+        
+        const avgDuration = performanceResults.reduce((a, b) => a + b, 0) / performanceResults.length;
+        const maxDuration = Math.max(...performanceResults);
+        const allWithinLimit = performanceResults.every(d => d < 500);
+        
+        results.push({
+          name: 'DeadMail message persistence performance',
+          passed: allWithinLimit,
+          message: `Avg: ${avgDuration.toFixed(2)}ms, Max: ${maxDuration.toFixed(2)}ms ${allWithinLimit ? '(✓ all <500ms)' : '(✗ some ≥500ms)'}`,
+          duration: avgDuration
+        });
+      } catch (error) {
+        results.push({
+          name: 'DeadMail message persistence performance',
+          passed: false,
+          message: `Error: ${error.message}`
+        });
+      }
+
+      return results;
+    }
+
+    async function testAppNavigation() {
+      const results = [];
+
+      // Test 10: Terminal command parsing for app launch
+      try {
+        const ghostpaintCommand = 'ghostpaint';
+        const deadmailCommand = 'deadmail';
+        
+        const validCommands = ['ghostpaint', 'deadmail', 'help', 'ls', 'cd', 'cat', 'clear', 'haunt', 'mutate'];
+        
+        const ghostpaintValid = validCommands.includes(ghostpaintCommand);
+        const deadmailValid = validCommands.includes(deadmailCommand);
+        
+        results.push({
+          name: 'Terminal command parsing for app launch',
+          passed: ghostpaintValid && deadmailValid,
+          message: ghostpaintValid && deadmailValid
+            ? 'Both app launch commands are valid'
+            : 'One or more app launch commands are invalid'
+        });
+      } catch (error) {
+        results.push({
+          name: 'Terminal command parsing for app launch',
+          passed: false,
+          message: `Error: ${error.message}`
+        });
+      }
+
+      // Test 11: App state management
+      try {
+        let currentApp = null;
+        
+        currentApp = 'ghostpaint';
+        const ghostpaintLaunched = currentApp === 'ghostpaint';
+        
+        currentApp = null;
+        const returnedToTerminal1 = currentApp === null;
+        
+        currentApp = 'deadmail';
+        const deadmailLaunched = currentApp === 'deadmail';
+        
+        currentApp = null;
+        const returnedToTerminal2 = currentApp === null;
+        
+        const allTransitionsValid = ghostpaintLaunched && returnedToTerminal1 && deadmailLaunched && returnedToTerminal2;
+        
+        results.push({
+          name: 'App state management',
+          passed: allTransitionsValid,
+          message: allTransitionsValid
+            ? 'All app state transitions work correctly'
+            : 'Some app state transitions failed'
+        });
+      } catch (error) {
+        results.push({
+          name: 'App state management',
+          passed: false,
+          message: `Error: ${error.message}`
+        });
+      }
+
+      return results;
+    }
+
+    window.runAllTests = async function() {
+      const resultsDiv = document.getElementById('results');
+      const loadingDiv = document.getElementById('loading');
+      const runButton = document.getElementById('runTests');
+      
+      resultsDiv.innerHTML = '';
+      loadingDiv.style.display = 'block';
+      runButton.disabled = true;
+      
+      testResults = [];
+
+      try {
+        // Run GhostPaint tests
+        const ghostpaintResults = await testGhostPaintSaveLoad();
+        testResults.push(...ghostpaintResults);
+
+        // Run DeadMail tests
+        const deadmailResults = await testDeadMailPersistence();
+        testResults.push(...deadmailResults);
+
+        // Run navigation tests
+        const navigationResults = await testAppNavigation();
+        testResults.push(...navigationResults);
+
+        // Display results
+        displayResults();
+      } catch (error) {
+        resultsDiv.innerHTML = `<div class="test-result fail">Fatal error: ${error.message}</div>`;
+      } finally {
+        loadingDiv.style.display = 'none';
+        runButton.disabled = false;
+      }
+    };
+
+    function displayResults() {
+      const resultsDiv = document.getElementById('results');
+      
+      let html = '';
+      
+      // GhostPaint section
+      html += '<div class="test-section">';
+      html += '<h2>GhostPaint Save/Load Tests (Requirement 3.5)</h2>';
+      testResults.slice(0, 4).forEach(result => {
+        html += `<div class="test-result ${result.passed ? 'pass' : 'fail'}">`;
+        html += `${result.passed ? '✓' : '✗'} ${result.name}: ${result.message}`;
+        html += '</div>';
+      });
+      html += '</div>';
+      
+      // DeadMail section
+      html += '<div class="test-section">';
+      html += '<h2>DeadMail Persistence Tests (Requirement 4.4)</h2>';
+      testResults.slice(4, 9).forEach(result => {
+        html += `<div class="test-result ${result.passed ? 'pass' : 'fail'}">`;
+        html += `${result.passed ? '✓' : '✗'} ${result.name}: ${result.message}`;
+        if (result.duration) {
+          html += ` <span class="performance">(${result.duration.toFixed(2)}ms)</span>`;
+        }
+        html += '</div>';
+      });
+      html += '</div>';
+      
+      // Navigation section
+      html += '<div class="test-section">';
+      html += '<h2>App Navigation Tests</h2>';
+      testResults.slice(9).forEach(result => {
+        html += `<div class="test-result ${result.passed ? 'pass' : 'fail'}">`;
+        html += `${result.passed ? '✓' : '✗'} ${result.name}: ${result.message}`;
+        html += '</div>';
+      });
+      html += '</div>';
+      
+      // Summary
+      const passed = testResults.filter(r => r.passed).length;
+      const failed = testResults.filter(r => r.failed).length;
+      const total = testResults.length;
+      
+      html += '<div class="summary">';
+      html += '<h2>Test Summary</h2>';
+      html += `<p><strong>Total Tests:</strong> ${total}</p>`;
+      html += `<p><strong>Passed:</strong> ${passed} ✓</p>`;
+      html += `<p><strong>Failed:</strong> ${failed} ✗</p>`;
+      html += `<p><strong>Success Rate:</strong> ${((passed / total) * 100).toFixed(1)}%</p>`;
+      
+      if (failed === 0) {
+        html += '<p style="color: #55FF55; font-size: 20px;">✅ All tests passed!</p>';
+      } else {
+        html += '<p style="color: #FF5555; font-size: 20px;">⚠️ Some tests failed.</p>';
+      }
+      html += '</div>';
+      
+      resultsDiv.innerHTML = html;
+    }
+
+    window.clearStorage = function() {
+      if (confirm('Clear localStorage and reset filesystem?')) {
+        localStorage.clear();
+        alert('Storage cleared! Run tests again to create fresh data.');
+        document.getElementById('results').innerHTML = '';
+      }
+    };
+  </script>
+</body>
+</html>

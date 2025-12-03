@@ -1,0 +1,127 @@
+.windowOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  padding: 20px;
+}
+
+.window {
+  background: var(--color-black);
+  border: 2px solid var(--color-text);
+  box-shadow: 0 0 20px var(--color-text);
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-mono);
+  position: relative;
+}
+
+.titleBar {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--color-black);
+  color: var(--color-text);
+  position: relative;
+  border-bottom: 1px solid var(--color-text);
+}
+
+.topLeft,
+.topRight {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.titleBorder {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.title {
+  font-weight: bold;
+  white-space: nowrap;
+  padding: 0 8px;
+  letter-spacing: 2px;
+}
+
+.closeButton {
+  background: transparent;
+  border: 1px solid var(--color-text);
+  color: var(--color-text);
+  padding: 2px 8px;
+  margin-left: 8px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.closeButton:hover {
+  background: var(--color-text);
+  color: var(--color-black);
+  box-shadow: 0 0 10px var(--color-text);
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+.leftBorder,
+.rightBorder {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  display: flex;
+  align-items: stretch;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--color-text);
+}
+
+.leftBorder {
+  left: 0;
+}
+
+.rightBorder {
+  right: 0;
+}
+
+.innerContent {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+  color: var(--color-text);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-top: 1px solid var(--color-text);
+  color: var(--color-text);
+}
+
+.bottomLeft,
+.bottomRight {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.bottomBorder {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+}

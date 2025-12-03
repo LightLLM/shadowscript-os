@@ -1,0 +1,171 @@
+.compose {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--color-text);
+}
+
+.title {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+
+.form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.label {
+  color: var(--color-text);
+  font-weight: bold;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.input,
+.textarea {
+  background: var(--color-black);
+  border: 2px solid var(--color-text);
+  color: var(--color-text);
+  padding: 10px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  box-shadow: 0 0 10px var(--color-text);
+  border-color: var(--color-bright-green);
+}
+
+/* Blinking cursor effect */
+.input,
+.textarea {
+  caret-color: var(--color-text);
+}
+
+.input:focus,
+.textarea:focus {
+  animation: blinkingCaret 1s step-end infinite;
+}
+
+@keyframes blinkingCaret {
+  0%, 50% {
+    caret-color: var(--color-text);
+  }
+  51%, 100% {
+    caret-color: transparent;
+  }
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--color-dark-gray);
+  opacity: 0.6;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 150px;
+}
+
+.inputError {
+  border-color: var(--color-bright-red);
+  box-shadow: 0 0 5px var(--color-bright-red);
+}
+
+.errorText {
+  color: var(--color-bright-red);
+  font-size: 12px;
+  margin-top: 2px;
+  animation: errorPulse 0.5s ease-in-out;
+}
+
+@keyframes errorPulse {
+  0% {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.generalError {
+  padding: 10px;
+  background: rgba(170, 0, 0, 0.2);
+  border: 1px solid var(--color-bright-red);
+  color: var(--color-bright-red);
+  text-align: center;
+  animation: errorPulse 0.5s ease-in-out;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.sendButton,
+.cancelButton {
+  flex: 1;
+  padding: 12px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid var(--color-text);
+}
+
+.sendButton {
+  background: transparent;
+  color: var(--color-text);
+}
+
+.sendButton:hover:not(:disabled) {
+  background: var(--color-text);
+  color: var(--color-black);
+  box-shadow: 0 0 20px var(--color-text);
+  transform: scale(1.02);
+}
+
+.sendButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cancelButton {
+  background: transparent;
+  color: var(--color-text);
+}
+
+.cancelButton:hover:not(:disabled) {
+  background: var(--color-bright-red);
+  border-color: var(--color-bright-red);
+  color: var(--color-black);
+  box-shadow: 0 0 15px var(--color-bright-red);
+}
+
+.cancelButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

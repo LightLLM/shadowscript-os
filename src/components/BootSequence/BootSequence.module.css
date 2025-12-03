@@ -1,0 +1,64 @@
+.bootSequence {
+  padding: 2rem;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--color-phosphor, #55ff55);
+  white-space: pre;
+  overflow-y: auto;
+  height: 100vh;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.bootLine {
+  margin: 0;
+  padding: 0;
+  animation: lineAppear 0.1s ease-out;
+}
+
+.progressBar {
+  color: var(--color-bright-cyan, #55ffff);
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.boxDrawing {
+  color: var(--color-bright-green, #55ff55);
+  text-shadow: 0 0 8px var(--color-bright-green, #55ff55);
+}
+
+.cursor {
+  display: inline-block;
+  animation: blink 1s step-end infinite;
+  color: var(--color-phosphor, #55ff55);
+  margin-left: 2px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lineAppear {
+  from {
+    opacity: 0;
+    transform: translateX(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}

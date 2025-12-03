@@ -1,0 +1,156 @@
+.messageReader {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.backButton {
+  background: transparent;
+  border: 2px solid var(--color-text);
+  color: var(--color-text);
+  padding: 8px 16px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.backButton:hover {
+  background: var(--color-text);
+  color: var(--color-black);
+  box-shadow: 0 0 15px var(--color-text);
+}
+
+.messageHeader {
+  padding: 15px;
+  border: 2px solid var(--color-text);
+  background: rgba(0, 170, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+.headerRow {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: var(--color-text);
+}
+
+.headerRow:last-child {
+  margin-bottom: 0;
+}
+
+.headerLabel {
+  font-weight: bold;
+  min-width: 80px;
+  letter-spacing: 1px;
+}
+
+.headerValue {
+  flex: 1;
+  word-break: break-word;
+}
+
+.messageBody {
+  flex: 1;
+  padding: 20px;
+  border: 2px solid var(--color-text);
+  background: var(--color-black);
+  overflow-y: auto;
+  position: relative;
+}
+
+.bodyContent {
+  color: var(--color-text);
+  line-height: 1.6;
+  animation: flickerText 0.15s infinite;
+}
+
+@keyframes flickerText {
+  0%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 5px var(--color-text);
+  }
+  50% {
+    opacity: 0.98;
+    text-shadow: 0 0 8px var(--color-text), 0 0 3px var(--color-text);
+  }
+}
+
+.bodyLine {
+  margin: 0 0 10px 0;
+  animation: distortText 3s ease-in-out infinite;
+  animation-delay: calc(var(--line-index, 0) * 0.1s);
+}
+
+@keyframes distortText {
+  0%, 100% {
+    transform: translateX(0);
+    filter: blur(0);
+  }
+  25% {
+    transform: translateX(1px);
+  }
+  50% {
+    transform: translateX(-1px);
+    filter: blur(0.3px);
+  }
+  75% {
+    transform: translateX(0.5px);
+  }
+}
+
+/* Add subtle haunted effects */
+.messageBody::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 170, 0, 0.03) 2px,
+    rgba(0, 170, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  animation: scanlineMove 8s linear infinite;
+}
+
+@keyframes scanlineMove {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(20px);
+  }
+}
+
+/* Random glitch effect */
+.messageBody::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  pointer-events: none;
+  animation: randomGlitch 5s infinite;
+}
+
+@keyframes randomGlitch {
+  0%, 90%, 100% {
+    opacity: 0;
+  }
+  91%, 93% {
+    opacity: 1;
+    background: rgba(0, 170, 0, 0.1);
+    box-shadow: inset 0 0 20px rgba(0, 170, 0, 0.3);
+  }
+}

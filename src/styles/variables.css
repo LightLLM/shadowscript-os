@@ -1,0 +1,29 @@
+:root {
+  /* VGA Color Palette */
+  --color-black: #000000;
+  --color-blue: #0000AA;
+  --color-green: #00AA00;
+  --color-cyan: #00AAAA;
+  --color-red: #AA0000;
+  --color-magenta: #AA00AA;
+  --color-brown: #AA5500;
+  --color-light-gray: #AAAAAA;
+  --color-dark-gray: #555555;
+  --color-bright-blue: #5555FF;
+  --color-bright-green: #55FF55;
+  --color-bright-cyan: #55FFFF;
+  --color-bright-red: #FF5555;
+  --color-bright-magenta: #FF55FF;
+  --color-yellow: #FFFF55;
+  --color-white: #FFFFFF;
+  
+  /* Primary theme colors */
+  --color-phosphor: var(--color-bright-green);
+  --color-background: var(--color-black);
+  --color-text: var(--color-phosphor);
+  
+  /* Typography */
+  --font-mono: 'Courier New', monospace;
+  --font-size-base: 16px;
+  --line-height-base: 1.2;
+}

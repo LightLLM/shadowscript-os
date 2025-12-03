@@ -1,0 +1,53 @@
+.pixelGridContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.pixelGrid {
+  display: grid;
+  gap: 1px;
+  background: var(--color-dark-gray);
+  border: 2px solid var(--color-text);
+  padding: 2px;
+  max-width: 512px;
+  max-height: 512px;
+  aspect-ratio: 1;
+}
+
+.pixel {
+  aspect-ratio: 1;
+  cursor: crosshair;
+  border: 1px solid rgba(85, 255, 85, 0.1);
+  transition: all 0.1s;
+  position: relative;
+}
+
+.pixel:hover {
+  border-color: var(--color-text);
+  box-shadow: 0 0 8px var(--color-text);
+}
+
+.pixelHovered::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 2px solid var(--color-bright-cyan);
+  pointer-events: none;
+  animation: hauntedPulse 0.5s ease-in-out infinite;
+}
+
+@keyframes hauntedPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
