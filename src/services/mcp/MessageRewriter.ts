@@ -12,7 +12,6 @@ export class MessageRewriter {
   
   // Pre-compiled patterns for better performance
   private readonly WORD_SPLIT_PATTERN = /(\s+)/;
-  private readonly WHITESPACE_PATTERN = /\s+$/;
   
   // Pre-defined substitution maps for faster lookups
   private readonly LETTER_SUBSTITUTIONS: Record<string, string> = {
