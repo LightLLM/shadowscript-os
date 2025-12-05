@@ -13,13 +13,25 @@
 
 - [x] 2. Implement CRT display effects and visual foundation
 
-  - [ ] 2.1 Create CRTDisplay component with props interface
+  - [x] 2.1 Create CRTDisplay component with props interface
+
+
+
+
+
+
 
     - Implement component structure with children wrapper
     - Add TypeScript interface for glitchIntensity, scanlineOpacity, phosphorColor props
     - _Requirements: 1.1, 1.2, 1.3_
 
-  - [ ] 2.2 Implement CSS-based CRT visual effects
+  - [x] 2.2 Implement CSS-based CRT visual effects
+
+
+
+
+
+
 
     - Create scanline overlay using CSS pseudo-element with repeating-linear-gradient
     - Add phosphor glow effect using text-shadow
